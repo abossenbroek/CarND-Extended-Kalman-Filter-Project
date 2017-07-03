@@ -44,7 +44,6 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
     float vx = x_state(2);
     float vy = x_state(3);
 
-    //TODO: YOUR CODE HERE
     float px_sq_py_sq = px * px + py * py;
 
     //check division by zero

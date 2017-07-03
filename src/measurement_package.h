@@ -12,6 +12,12 @@ public:
     RADAR
   } sensor_type_;
 
+  enum RadarMeasurement {
+    RHO,
+    PHI,
+    RHO_DOT
+  } radar_measurement_;
+
   Eigen::VectorXd raw_measurements_;
 };
 

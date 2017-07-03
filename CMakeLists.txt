@@ -1,3 +1,5 @@
+set(CMAKE_LEGACY_CYGWIN_WIN32 0) # Remove when CMake >= 2.8.4 is required
+
 project(ExtendedKF)
 
 cmake_minimum_required (VERSION 3.5)
@@ -8,7 +10,7 @@ set(CXX_FLAGS "-Wall")
 set(CMAKE_CXX_FLAGS, "${CXX_FLAGS}")
 
 set(sources src/main.cpp src/tools.cpp src/FusionEKF.cpp src/kalman_filter.cpp src/tools.h src/FusionEKF.h src/kalman_filter.h)
-
+set(SOURCE_FILES src/json.hpp src/measurement_package.h)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin") 
 

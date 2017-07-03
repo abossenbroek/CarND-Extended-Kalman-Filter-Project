@@ -63,16 +63,56 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     ekf_.x_ = VectorXd(4);
     ekf_.x_ << 1, 1, 1, 1;
 
+    ekf_.F_ = MatrixXd(4, 4);
+    ekf_.F_ << 1, 0, 1, 0,
+               0, 1, 0, 1,
+               0, 0, 1, 0,
+               0, 0, 0, 1;
+
+    //state covariance matrix P
+    ekf_.P_ = MatrixXd(4, 4);
+    ekf_.P_ << 1, 0, 0, 0,
+               0, 1, 0, 0,
+               0, 0, 1000, 0,
+               0, 0, 0, 1000;
+
+
+    //measurement covariance
+    ekf_.R_ = MatrixXd(2, 2);
+    ekf_.R_ << 0.0225, 0,
+               0, 0.0225;
+
+    //measurement matrix
+    ekf_.H_ = MatrixXd(2, 4);
+    ekf_.H_ << 1, 0, 0, 0,
+               0, 1, 0, 0;
+
+    kf_.Q_ = MatrixXd(4, 4);
+
+
     if (measurement_pack.sensor_type_ == MeasurementPackage::RADAR) {
+      float rho = measurement_pack.raw_measurements_(MeasurementPackage::RHO);
+      float phi = measurement_pack.raw_measurements_(MeasurementPackage::PHI);
+      float rho_dot = measurement_pack.raw_measurements_(MeasurementPackage::RHO_DOT);
+
+      float c_phi = cos(phi);
+      float s_phi = sin(phi);
+
+      float px = rho * c_phi;
+      float py = rho * s_phi;
+      float vx = rho_dot * c_phi;
+      float vy = rho_dot * s_phi;
+
+      ekf_.x_ << px, py, vx, vy;
       /**
       Convert radar from polar to cartesian coordinates and initialize state.
       */
     }
     else if (measurement_pack.sensor_type_ == MeasurementPackage::LASER) {
-      /**
-      Initialize state.
-      */
+      ekf_.x_ << measurement_pack.raw_measurements_(0), measurement_pack.raw_measurements_(1), 0.0, 0.0;
+      previous_timestamp_ = measurement_pack.timestamp_;
     }
+
 
     // done initializing, no need to predict or update
     is_initialized_ = true;
