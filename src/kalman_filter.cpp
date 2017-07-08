@@ -40,26 +40,6 @@ void KalmanFilter::Update(const VectorXd &z) {
 }
 
 void KalmanFilter::UpdateEKF(const VectorXd &z) {
-
-    VectorXd z_conv = VectorXd(4);
-    float rho = z(MeasurementPackage::RHO);
-    float phi = z(MeasurementPackage::PHI);
-    float rho_dot = z(MeasurementPackage::RHO_DOT);
-    /**
-    Convert radar from polar to cartesian coordinates and initialize state.
-    */
-    float c_phi = cos(phi);
-    float s_phi = sin(phi);
-
-    float px = rho * c_phi;
-    float py = rho * s_phi;
-    float vx = rho_dot * c_phi;
-    float vy = rho_dot * s_phi;
-
-    z_conv << px, py, vx, vy;
-
-    Tools t;
-
     VectorXd y;
     MatrixXd S;
     MatrixXd K;
