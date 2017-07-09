@@ -46,9 +46,17 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
     MatrixXd I = MatrixXd::Identity(x_.size(), x_.size());
     MatrixXd Ht = H_.transpose();
 
-    Tools t;
+    float rho = sqrt(x_(0) * x_(0) + x_(1) * x_(1));
+    float phi = atan2(x_(1), x_(2));
+    float rho_d = (x_(0) * x_(2) + x_(1) * x_(3)) / rho;
+    VectorXd h_prime = VectorXd(3);
+    h_prime << rho, phi, rho_d;
 
-    y = z - t.CalculateJacobian(x_) * x_;
+    y = z - h_prime;
+    // angle normalization
+    while (y(1) >  M_PI) y(1) -= 2. * M_PI;
+    while (y(1) < -M_PI) y(1) += 2. * M_PI;
+
     S = H_ * P_ * Ht + R_;
     K = P_ * Ht * S.inverse();
     x_ = x_ + K * y;
